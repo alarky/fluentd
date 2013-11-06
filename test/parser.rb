@@ -71,7 +71,7 @@ module ParserTest
     end
 
     def test_call
-      time, record = @parser.call('192.168.0.1 - - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0"')
+      time, record = @parser.call('192.168.0.1 - - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0 (\"Linux\";)"')
 
       assert_equal(str2time('28/Feb/2013:12:00:00 +0900', '%d/%b/%Y:%H:%M:%S %z'), time)
       assert_equal({
@@ -82,7 +82,7 @@ module ParserTest
         'host'    => '192.168.0.1',
         'path'    => '/',
         'referer' => nil,
-        'agent'   => 'Opera/12.0'
+        'agent'   => 'Opera/12.0 (\"Linux\";)'
       }, record)
     end
   end
@@ -140,19 +140,19 @@ module ParserTest
         'code'    => '200',
         'size'    => '777',
         'referer' => '-',
-        'agent'   => 'Opera/12.0'
+        'agent'   => 'Opera/12.0 (\"Linux\";)'
       }
     end
 
     def test_call
-      time, record = @parser.call('127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0"')
+      time, record = @parser.call('127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0 (\"Linux\";)"')
 
       assert_equal(str2time('28/Feb/2013:12:00:00 +0900', '%d/%b/%Y:%H:%M:%S %z'), time)
       assert_equal(@expected, record)
     end
 
     def test_call_with_empty_included_path
-      time, record = @parser.call('127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET /a[ ]b HTTP/1.1" 200 777 "-" "Opera/12.0"')
+      time, record = @parser.call('127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET /a[ ]b HTTP/1.1" 200 777 "-" "Opera/12.0 (\"Linux\";)"')
 
       assert_equal(str2time('28/Feb/2013:12:00:00 +0900', '%d/%b/%Y:%H:%M:%S %z'), time)
       assert_equal(@expected.merge('path' => '/a[ ]b'), record)
